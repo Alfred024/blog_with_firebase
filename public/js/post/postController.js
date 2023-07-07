@@ -1,3 +1,5 @@
+//Agrega un evento listener al botón para crear un Post, la uqe dice: Realiza un Post
+//
 $(() => {
   $('#btnModalPost').click(() => {
     $('#tituloNewPost').val('')

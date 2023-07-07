@@ -6,13 +6,35 @@ class Autenticacion {
    
   }
 
+  //Función para crear ususario
   crearCuentaEmailPass (email, password, nombres) {
-    /*Materialize.toast(
-      `Bienvenido ${nombres}, debes realizar el proceso de verificación`,
-      4000
-    )
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(res =>{
+        res.user.updateProfile({
+          //Actualizar la información del usuario
+          displayName: nombres
+        });
 
-    $('.modal').modal('close')*/
+        //Url para redireccionar dseúés de actualizar los datos
+        const config = {
+          'url': 'http://localhost:3000'
+        }
+        res.user.sendEmailVerification(config)
+          .catch(error =>{
+            console.log('Error al mandar correo de verificación');
+            Materialize.toast(error.message, 4000);
+          });
+        
+        //Cerramos la sesión 
+        firebase.auth().signOut();
+        Materialize.toast(`Bienvenid@ ${nombres}, favor de verificar su cuenta`, 4000);
+
+        $('.modal').modal('close')
+      })
+      .catch(error =>{
+        console.log(error);
+        Materialize.toast(error.message, 4000);
+      })
     
   }
 
