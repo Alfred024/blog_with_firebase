@@ -15,7 +15,8 @@ $(() => {
     $("#btnInicioEmail").click(() => {
         const email = $('#emailSesion').val();
         const password = $('#passwordSesion').val();
-        // TODO : LLamar auth cuenta con email
+        const auth  = new Autenticacion();
+        auth.authEmailPass(email, password);
     });
 
     //$("#authGoogle").click(() => //AUTH con GOOGLE);
@@ -27,7 +28,7 @@ $(() => {
         $('#modalRegistro').modal('open');
     });
 
-    $('#btnIniciarSesion').click(() => {
+    $('#btnInicioSesion').click(() => {
         $('#modalRegistro').modal('close');
         $('#modalSesion').modal('open');
     });

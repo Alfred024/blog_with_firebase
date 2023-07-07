@@ -1,11 +1,4 @@
 class Autenticacion {
-  autEmailPass (email, password) {
-    //$('#avatar').attr('src', 'imagenes/usuario_auth.png')
-    //Materialize.toast(`Bienvenido ${result.user.displayName}`, 5000)
-    //$('.modal').modal('close')
-   
-  }
-
   //Función para crear ususario
   crearCuentaEmailPass (email, password, nombres) {
     firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -37,6 +30,25 @@ class Autenticacion {
       })
     
   }
+
+  //Función para iniciar sesión con un email
+  authEmailPass (email, password) {
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(res => {
+        if(res.user.emailVerified){
+          $('#avatar').attr('src', 'imagenes/usuario_auth.png');
+          Materialize.toast(`Bienvenido ${result.user.displayName}`, 5000);
+        }else{
+          firebase.auth().signOut();
+          Materialize.toast(`Favor de realizar la verificación de la cunea`, 5000);
+
+        }
+      });
+    
+    $('.modal').modal('close')
+  }
+
+  
 
   authCuentaGoogle () {
     //$('#avatar').attr('src', result.user.photoURL)
