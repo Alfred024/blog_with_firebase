@@ -1,11 +1,31 @@
 class Post {
-  constructor () {
-      // TODO inicializar firestore y settings
 
+
+  constructor () {
+    this.db = firebase.firestore();  
+    //Variable que nos ayudará a recuperar los datos delcarados en la BdD como timeStamp
+    const settings = {
+        timeStampInSnaphots: true
+    }
+    this.db.settings(settings);
   }
 
   crearPost (uid, emailUser, titulo, descripcion, imagenLink, videoLink) {
-    
+    return this.db.collection('posts').add({
+        uid: uid,
+        autor: emailUser, 
+        titulo: titulo, 
+        descripcion: descripcion, 
+        imagenLink: imagenLink, 
+        videoLink: videoLink,
+        fecha: firebase.firestore.FieldValue.serverTimeStamp()
+    })
+    .then(refDoc => {
+        console.log(`Post id: ${refDoc.id} `);
+    })
+    .catch(e => {
+        console.log(`Error con la creación del post: ${e}`);
+    });
   }
 
   consultarTodosPost () {
