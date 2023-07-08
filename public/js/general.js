@@ -17,12 +17,41 @@ $(() => {
     }
   })
 
-  // TODO: Adicionar el service worker
-
   // Init Firebase nuevamente
   firebase.initializeApp(varConfig);
 
-  // TODO: Registrar LLave publica de messaging
+  // Adicionar el service worker
+  navigator.serviceWorker.register('notificaciones-sw.js')
+    .then(registro =>{
+      console.log('Service worker registrado'); 
+      firebase.messaging().userServiceWorker(registro);
+    })
+    .catch(e =>{
+      console.log(`Error con las notificaciones:  ${e}`);
+    });
+
+    // Registrar LLave publica de messaging
+    messaging.usePublicVapidKey('BIe3SPSH_S64bLVZeJxaTpcLV_09wAj-FqgZ-IY0mhAqrypGs6n4houN-JQkhRCqMF0k2fCw-t13JQq9enydc3g');
+
+    messaging
+      .requestPermission()
+      .then(() => {
+      console.log('permiso otorgado')
+      return messaging.getToken()
+      })
+      .then(token => {
+        const db = firebase.firestore();
+        db.settings({ timestampsInSnapshots: true })
+        db
+          .collection('tokens')
+          .doc(token)
+          .set({
+            token: token
+          })
+          .catch(error => {
+            console.error(`Error al insertar el token en la BD => ${error}`)
+          })
+      })
 
   // TODO: Solicitar permisos para las notificaciones
 
