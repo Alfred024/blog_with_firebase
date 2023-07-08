@@ -74,11 +74,19 @@ $(() => {
   })
 
   $('#btnTodoPost').click(() => {
-    $('#tituloPost').text('Posts de la Comunidad')   
+    $('#tituloPost').text('Posts de la Comunidad');
+    const post = new Post();
+    post.consultarTodosPost();
   })
 
   $('#btnMisPost').click(() => {
-    //$('#tituloPost').text('Mis Posts')
-    //Materialize.toast(`Debes estar autenticado para ver tus posts`, 4000)    
+    const user = firebase.auth().currentUser;
+    if(user){
+      const post = new Post();
+      post.consultarPostxUsuario(user.email);
+      $('#tituloPost').text('Mis posts')
+    } else{
+      Materialize.toast(`Es necesario iniciar sesión para ver sus posts`, 4000)
+    }   
   })
 })

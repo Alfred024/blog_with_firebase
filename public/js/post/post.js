@@ -1,6 +1,4 @@
 class Post {
-
-
   constructor () {
     this.db = firebase.firestore();  
     //Variable que nos ayudará a recuperar los datos delcarados en la BdD como timeStamp
@@ -56,7 +54,29 @@ class Post {
   }
 
   consultarPostxUsuario (emailUser) {
-    
+    //El mismo método para consultar todos los posts, pero con el filtro where
+   this.db.collection('posts')
+    .where('autor', '===', emailUser)
+    .onSnapshot(querySnapshot =>{
+
+    $('posts').empty();
+
+    if(querySnapshot.empty){
+        $('#posts').append(this.obtenerTemplatePostVacio());
+    }else{
+        querySnapshot.forEach(post => {
+            let postHtml = this.obtenerPostTemplate(
+                post.data().autor,
+                post.data().titulo,
+                post.data().descripcion,
+                post.data().videoLink,
+                post.data().imagenLink,
+                Utilidad.obtenerFecha(post.data().fecha.toDate())
+            );
+            $('#posts').append(postHtml);
+        });
+    }
+});
   }
 
   obtenerTemplatePostVacio () {
