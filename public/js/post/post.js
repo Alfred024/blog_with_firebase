@@ -28,7 +28,10 @@ class Post {
 
   consultarTodosPost () {
     //Escucha los cambios de la colección 'post' y notifica a la app, ofreciedonos una copia de ello
-    this.db.collection('posts').onSnapshot(querySnapshot =>{
+    this.db
+        .collection('posts')
+        //.orderBy('fecha', 'asc') --> para ordenar por un campo específico
+        .onSnapshot(querySnapshot =>{
 
         //Limpia los posts renderizados y actualiza a los más nuevos
         $('posts').empty();
@@ -77,6 +80,37 @@ class Post {
         });
     }
 });
+  }
+
+  subirImagenAPost(file, uid){
+    //Si no existe la ruta la crea
+    const storageLink = firebase.storage().ref(`postImages/${uid}/${file.name}`);
+    //Esta variable almacena la tarea en ejecución
+    const task = storageLink.put(file);
+
+    task.on(
+        'state_changed', 
+        snapshot => {
+            const progreso = (snapshot.bytesTransfered / snapshot.totalBytes)*100;
+
+        },
+        err => {
+            Materialize.toast(`Error subiendo archivo = > ${err.message}`, 4000);
+            //No sé de dónde sea esta etiqueta "determinate", según yo debería estar en el modal del blog, de todas formas la dejé como el profe
+            $('.determinate').attr('style', `width: ${porcentaje}%`);
+        },
+        () => {
+            task.snapshot.ref
+              .getDownloadURL()
+              .then(url => {
+                console.log(url)
+                sessionStorage.setItem('imgNewPost', url)
+              })
+              .catch(err => {
+                Materialize.toast(`Error obteniendo downloadURL = > ${err}`, 4000)
+              })
+        }
+    )
   }
 
   obtenerTemplatePostVacio () {
@@ -184,4 +218,6 @@ class Post {
                 </div>
             </article>`
   }
+
+
 }
