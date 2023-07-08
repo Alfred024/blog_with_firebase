@@ -29,7 +29,30 @@ class Post {
   }
 
   consultarTodosPost () {
-    
+    //Escucha los cambios de la colección 'post' y notifica a la app, ofreciedonos una copia de ello
+    this.db.collection('posts').onSnapshot(querySnapshot =>{
+
+        //Limpia los posts renderizados y actualiza a los más nuevos
+        $('posts').empty();
+
+        if(querySnapshot.empty){
+            //Retorna un template precreado con la plantilla de un post demo
+            $('#posts').append(this.obtenerTemplatePostVacio());
+        }else{
+            //El método querySnapshot retorna la información de los datos de la colección
+            querySnapshot.forEach(post => {
+                let postHtml = this.obtenerPostTemplate(
+                    post.data().autor,
+                    post.data().titulo,
+                    post.data().descripcion,
+                    post.data().videoLink,
+                    post.data().imagenLink,
+                    Utilidad.obtenerFecha(post.data().fecha.toDate())
+                );
+                $('#posts').append(postHtml);
+            });
+        }
+    });
   }
 
   consultarPostxUsuario (emailUser) {
